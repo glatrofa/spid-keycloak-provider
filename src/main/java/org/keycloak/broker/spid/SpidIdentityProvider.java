@@ -168,7 +168,8 @@ public class SpidIdentityProvider extends AbstractIdentityProvider<SpidIdentityP
                     .nameIdPolicy(SAML2NameIDPolicyBuilder
                         .format(nameIDPolicyFormat)
                         // SPID: Aggiungi l'attributo SPNameQualifier all'elemento NameIDPolicy
-                        .setSPNameQualifier(issuerURL)
+                        // rimosso, non è richiesto dalla documentazione tecnica
+                        // .setSPNameQualifier(issuerURL)
                         .setAllowCreate(allowCreate))
                     .attributeConsumingServiceIndex(attributeConsumingServiceIndex)
                     .requestedAuthnContext(requestedAuthnContext)
