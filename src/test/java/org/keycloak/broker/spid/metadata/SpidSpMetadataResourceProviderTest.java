@@ -54,7 +54,7 @@ import org.xmlunit.builder.Input;
 import org.xmlunit.diff.Diff;
 import org.xmlunit.placeholder.PlaceholderDifferenceEvaluator;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 import javax.xml.transform.Source;
 import java.net.URI;
 import java.security.InvalidKeyException;
@@ -164,7 +164,8 @@ public class SpidSpMetadataResourceProviderTest {
 
         Response response = invitationResourceProvider.get();
         assertEquals(200, response.getStatus());
-        assertMetaData(response.readEntity(String.class), "/metadata/expected_metadata_public_SP.xml");
+        String current = response.readEntity(String.class);
+        assertMetaData(current, "/metadata/expected_metadata_public_SP.xml");
     }
 
     @Test
@@ -173,7 +174,8 @@ public class SpidSpMetadataResourceProviderTest {
 
         Response response = invitationResourceProvider.get();
         assertEquals(200, response.getStatus());
-        assertMetaData(response.readEntity(String.class), "/metadata/expected_metadata_private_SP.xml");
+        String current = response.readEntity(String.class);
+        assertMetaData(current, "/metadata/expected_metadata_private_SP.xml");
     }
 
     private Map<String, String> mockPublicSPConfig() {
