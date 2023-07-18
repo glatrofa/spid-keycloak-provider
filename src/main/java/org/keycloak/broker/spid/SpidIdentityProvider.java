@@ -89,7 +89,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamWriter;
 
 import java.io.StringWriter;
-import java.lang.reflect.Array;
 import java.net.URI;
 import java.security.KeyPair;
 import java.util.ArrayList;
@@ -117,7 +116,7 @@ public class SpidIdentityProvider extends AbstractIdentityProvider<SpidIdentityP
 
     @Override
     public Object callback(RealmModel realm, AuthenticationCallback callback, EventBuilder event) {
-        return new SpidSAMLEndpoint(realm, this, getConfig(), callback, destinationValidator);
+        return new SpidSAMLEndpoint(realm, this, getConfig(), callback, destinationValidator, session, session.getContext().getConnection());
     }
 
     @Override

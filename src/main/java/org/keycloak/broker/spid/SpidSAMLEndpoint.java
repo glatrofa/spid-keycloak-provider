@@ -169,14 +169,16 @@ public class SpidSAMLEndpoint {
 
     @Context
     private HttpHeaders headers;
+// org.keycloak.common.util.Resteasy.getContextData(KeycloakSession.class)
 
-
-    public SpidSAMLEndpoint(RealmModel realm, SpidIdentityProvider provider, SpidIdentityProviderConfig config, IdentityProvider.AuthenticationCallback callback, DestinationValidator destinationValidator) {
+    public SpidSAMLEndpoint(RealmModel realm, SpidIdentityProvider provider, SpidIdentityProviderConfig config, IdentityProvider.AuthenticationCallback callback, DestinationValidator destinationValidator, KeycloakSession session, ClientConnection clientConnection) {
         this.realm = realm;
         this.config = config;
         this.callback = callback;
         this.provider = provider;
         this.destinationValidator = destinationValidator;
+        this.session = session;
+        this.clientConnection = clientConnection;
     }
 
     @GET
@@ -286,7 +288,7 @@ public class SpidSAMLEndpoint {
         }
 
         public Response execute(String samlRequest, String samlResponse, String relayState, String clientId) {
-            event = new EventBuilder(realm, SpidSAMLEndpoint.this.session, clientConnection);
+            event = new EventBuilder(realm, session, clientConnection);
             Response response = basicChecks(samlRequest, samlResponse);
             if (response != null) return response;
             if (samlRequest != null) return handleSamlRequest(samlRequest, relayState);
@@ -465,7 +467,7 @@ public class SpidSAMLEndpoint {
 
                 if (assertionIsEncrypted) {
                     // This methods writes the parsed and decrypted assertion back on the responseType parameter:
-                    assertionElement = (Element) AssertionUtil.getAssertion(holder, responseType, keys.getPrivateKey());
+                    assertionElement = AssertionUtil.decryptAssertion(responseType, keys.getPrivateKey());
                 } else {
                     /* We verify the assertion using original document to handle cases where the IdP
                     includes whitespace and/or newlines inside tags. */
@@ -628,8 +630,8 @@ public class SpidSAMLEndpoint {
          */
         private AuthenticationSessionModel samlIdpInitiatedSSO(final String clientUrlName) {
             event.event(EventType.LOGIN);
-            CacheControlUtil.noBackButtonCacheControlHeader(SpidSAMLEndpoint.this.session);
-            Optional<ClientModel> oClient = SpidSAMLEndpoint.this.session.clients() // in caso utilizzare SpidSAMLEndpoint.this.session
+            CacheControlUtil.noBackButtonCacheControlHeader(session);
+            Optional<ClientModel> oClient = SpidSAMLEndpoint.this.session.clients()
             .searchClientsByAttributes(realm, Collections.singletonMap(SamlProtocol.SAML_IDP_INITIATED_SSO_URL_NAME, clientUrlName), 0, 1)
             .findFirst();
 
@@ -640,7 +642,7 @@ public class SpidSAMLEndpoint {
             }
 
             LoginProtocolFactory factory = (LoginProtocolFactory) session.getKeycloakSessionFactory().getProviderFactory(LoginProtocol.class, SamlProtocol.LOGIN_PROTOCOL);
-            SamlService samlService = (SamlService) factory.createProtocolEndpoint(SpidSAMLEndpoint.this.session, event);
+            SamlService samlService = (SamlService) factory.createProtocolEndpoint(session, event);
             ResteasyProviderFactory.getInstance().injectProperties(samlService);
             AuthenticationSessionModel authSession = samlService.getOrCreateLoginSessionForIdpInitiatedSso(session, SpidSAMLEndpoint.this.realm, oClient.get(), null);
             if (authSession == null) {
