@@ -8,7 +8,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.lscorcia</groupId>
     <artifactId>keycloak-spid-provider</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>22.0.0</version>
     <packaging>jar</packaging>
 
     <name>Keycloak SPID Service Provider</name>
@@ -108,7 +108,7 @@
     </dependencies>
 
     <build>
-        <finalName>spid-provider</finalName>
+        <finalName>${project.artifactId}-${project.version}</finalName>
         <pluginManagement>
             <plugins>
                 <plugin>
