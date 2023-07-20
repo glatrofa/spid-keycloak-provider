@@ -47,7 +47,7 @@ available in the project wiki (https://github.com/italia/spid-keycloak-provider/
 * Maven
 
 ## Build
-Just run `mvn clean package` for a full rebuild. The output package will
+Just run `mvn clean package -DskipTests` for a full rebuild. The output package will
 be generated under `target/spid-provider.jar`.
 
 ## Deployment
